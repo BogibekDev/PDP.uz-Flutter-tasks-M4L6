@@ -10,6 +10,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late PageController _pageController;
+  int _selectedPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +29,12 @@ class _HomePageState extends State<HomePage> {
           ),
           centerTitle: true),
       body: PageView(
+        controller: _pageController,
+        onPageChanged: (int index) {
+          setState(() {
+            _selectedPage = index;
+          });
+        },
         children: [
           Container(
             color: Colors.deepPurple,
@@ -67,14 +82,31 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: const MyDrawer(),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
-        unselectedLabelStyle: TextStyle(color: Colors.redAccent),
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home,color: Colors.blue,), label: "Home"),
+        backgroundColor: Colors.redAccent,
+        type: BottomNavigationBarType.fixed,
+        unselectedLabelStyle: const TextStyle(color: Colors.white),
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.message), label: "Message"),
-          BottomNavigationBarItem(icon: Icon(Icons.ondemand_video), label: "Video"),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "Notification",backgroundColor: Colors.red),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.ondemand_video), label: "Video"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications), label: "Notification"),
         ],
+        currentIndex: _selectedPage,
+        selectedItemColor: Colors.blue,
+        onTap: (int index) {
+          setState(() {
+            _selectedPage = index;
+            _pageController.animateToPage(index,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInCubic);
+          });
+        },
       ),
     );
   }
